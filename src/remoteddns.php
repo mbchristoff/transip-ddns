@@ -59,6 +59,7 @@ foreach($dnsEntries as $dnsEntry)
             echo "Updating old ip " . $dnsEntry->content . ", with: ". $ipAddress . " for: " . $subdomain . ".". $domainname .PHP_EOL;
             $dnsEntry->content = $newValues[$dnsEntry->name];
             $do_change=1;
+            $record_found=1;
         }
         else
         {
@@ -66,11 +67,20 @@ foreach($dnsEntries as $dnsEntry)
             file_put_contents($logfile, "". $time ." No update required, current IP: " . $dnsEntry->content . " is unchanged for: " . $subdomain . ".". $domainname . ".\r\n", FILE_APPEND);
             
             echo "No update required, current IP: " . $dnsEntry->content . " is unchanged for: " . $subdomain . ".". $domainname .PHP_EOL;
+            $record_found=1;
         }
         break;
     }
     
 }
+
+
+if ($record_found == 0 )
+{
+    echo "Record: " . $subdomain . ".". $domainname . " not found on TransIP Nameservers." .PHP_EOL;
+    
+}
+
 
 // Update the record when nessecary
 if ($do_change == 1 )

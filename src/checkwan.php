@@ -7,7 +7,7 @@ $domains []= 'sub.domain.tld';
 $domains []= 'sub.sub.domain.tld';
 
 // Logfile to log output to
-$logfile = '/var/log/nginx/ddns.log';
+$logfile = '/var/log/ddns.log';
 
 // SCRIPT
 // Get external ip address
@@ -16,11 +16,16 @@ $ipAddress = file_get_contents('http://ipecho.net/plain');
 // Include the required files from the API
 require_once('lib/Transip/DomainService.php');
 
+if (empty($domains)) {
+     exit('No domains in array' .PHP_EOL);
+}
+
 // Loop through domains
 foreach ($domains as $fqdn)
 {
     //set do_change to 0
     $do_change = 0;
+    $record_found = 0;
     
     // Seperate subdomain and domain from fqdn
     $subdomain = implode('.', explode('.', $fqdn, -2));
@@ -49,6 +54,7 @@ foreach ($domains as $fqdn)
                 echo "Updating old ip " . $dnsEntry->content . ", with: ". $ipAddress . " for: " . $subdomain . ".". $domainname .PHP_EOL;
                 $dnsEntry->content = $newValues[$dnsEntry->name];
                 $do_change=1;
+                $record_found=1;
             }
             else
             {
@@ -56,12 +62,19 @@ foreach ($domains as $fqdn)
                 file_put_contents($logfile, "". $time ." No update required, current IP: " . $dnsEntry->content . " is unchanged for: " . $subdomain . ".". $domainname . ".\r\n", FILE_APPEND);
                 
                 echo "No update required, current IP: " . $dnsEntry->content . " is unchanged for: " . $subdomain . ".". $domainname .PHP_EOL;
+                $record_found=1;
             }
             break;
         }
         
     }
-    
+
+    if ($record_found == 0 )
+    {
+        echo "Record: " . $subdomain . ".". $domainname . " not found on TransIP Nameservers." .PHP_EOL;
+        
+    }
+
     // Update the record when nessecary
     if ($do_change == 1 )
     {

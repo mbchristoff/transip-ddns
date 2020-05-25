@@ -1,1 +1,3 @@
-lib/Transip/ApiSettings.php
+src/lib/Transip/ApiSettings.php
+docker-apache/ApiSettings.php
+docker-cli/ApiSettings.php
