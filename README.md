@@ -25,7 +25,7 @@ Log in to your account and go to "my account" & API.
 First off enable the API by setting the toggle just under API-settings to on.
 Create a new keypair (without ip whitelist) and save the key for now.
 
-Edit "lib/Transip/ApiSettings.php" and fill in your TransIP username and the key you generated.
+Edit "src/lib/Transip/ApiSettings.php" and fill in your TransIP username and the key you generated.
 ```
 ......................................................
     /**
@@ -46,7 +46,7 @@ YOURKEYHERE
 
 ### Local webserver without static ip
 
-Edit "checkwan.php" and change the domains (you can add and delete them) and define a logfile.
+Edit "src/checkwan.php" and change the domains (you can add and delete them) and define a logfile.
 Make sure to note down the domains in fqdn format.
 ```
 ......................................................
@@ -63,7 +63,7 @@ $logfile = '/var/log/nginx/ddns.log';
 ....................................................
 ```
 
-Copy this folder to your webserver and test if everything works as expected.
+Copy the src folder to your webserver and test if everything works as expected.
 ```
 michael@ws-michael:~$ php7.4 /var/www/local/html/transip-ddns/checkwan.php 
 Updating old ip 1.2.3.4, with: 12.34.56.78 for: @.domain.tld
@@ -95,7 +95,7 @@ define('KEY', 'Mjs74k9bC3ACBn5pKn9eCnPeBRZFrreY'); //Generate your own random ke
 ......................................................
 ```
 
-Copy this folder to your webserver and test if everything works as expected.
+Copy the src folder to your webserver and test if everything works as expected.
 Use curl or browse to your webserver's address and include the key and domain in your request.
 ```
 michael@ws-michael:~$ curl "http://remotewebserver.tld/transip-ddns/remoteddns.php?domain=@.domain.tld&key=Mjs74k9bC3ACBn5pKn9eCnPeBRZFrreY"
@@ -107,6 +107,44 @@ Finally, create a cronjob to make sure the A records are being kept up to date e
 ```
 0 * * * * root " curl "http://remotewebserver.tld/transip-ddns/remoteddns.php?domain=@.domain.tld&key=Mjs74k9bC3ACBn5pKn9eCnPeBRZFrreY"
 ```
+
+## Running in Docker
+
+### images
+This repo contains two images, both hosted at hub.docker.com as public images:
+```
+mbchristoff/transip-ddns:apache-latest
+mbchristoff/transip-ddns:cli-latest
+```
+The apache image will contain everything needed to run the scripts in a container with built in webserver.
+The cli container will simply run the php script and exit afterwards.
+
+### usage
+
+#### config
+Edit "src/lib/Transip/ApiSettings.php" as described in "All scenarios" above and mount it to your container as such:
+```
+-v "/path/to/ApiSettings.php=/var/www/html/lib/Transip/ApiSettings.php
+```
+
+The domains will be passed through as environment variables as such:
+```
+-e DOMAINS="@.domain.tld,*.domain.tld,sub.domain.tld"
+```
+These domains will be parsed and placed in the checkwan.php script.
+
+Log files will be written to /var/log/ddns.log, it's possible to mount this folder to a folder on your host system to make them persistent.
+
+#### Full example commands:
+```
+docker run -p 8080:80 -e DOMAINS="@.domain.tld,*.domain.tld,sub.domain.tld" -v "/path/to/ApiSettings.php=/var/www/html/lib/Transip/ApiSettings.php" -v "/path/to/logs/=/var/log/" mbchristoff/transip-ddns:apache-latest
+
+docker run -e DOMAINS="@.domain.tld,*.domain.tld,sub.domain.tld" -v "/path/to/ApiSettings.php=/var/www/html/lib/Transip/ApiSettings.php" -v "/path/to/logs/=/var/log/" mbchristoff/transip-ddns:cli-latest
+```
+
+#### Docker-compose
+Example docker-compose.yaml files are included in this repo, simply edit and copy these files to a server running docker & docker-compose and run docker-compose up.
+
 
 ## Bonus
 

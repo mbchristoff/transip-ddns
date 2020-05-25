@@ -1,0 +1,9 @@
+version: '3.3'
+services:
+  transip-ddns:
+    image: mbchristoff/transip-ddns:cli-latest
+    volumes:
+      - ./ApiSettings.php:/var/www/html/lib/Transip/ApiSettings.php
+      #- ./logs/var/log
+    environment:
+      - DOMAINS=@.domain.tld,*.domain.tld,sub.domain.tld

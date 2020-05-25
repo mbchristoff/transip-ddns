@@ -1,0 +1,11 @@
+version: '3.3'
+services:
+  transip-ddns:
+    image: mbchristoff/transip-ddns:apache-latest
+    volumes:
+      - ./ApiSettings.php:/var/www/html/lib/Transip/ApiSettings.php
+      #- ./logs/var/log
+    ports:
+      - "8080:80"
+    environment:
+      - DOMAINS=@.domain.tld,*.domain.tld,sub.domain.tld
