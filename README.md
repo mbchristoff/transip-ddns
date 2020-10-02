@@ -133,13 +133,18 @@ The domains will be passed through as environment variables as such:
 ```
 These domains will be parsed and placed in the checkwan.php script.
 
+The remote key can be added for remoteddns.php can be added as environment variable as well:
+```
+-e REMOTEKEY=mysupersecurekey
+```
+
 Log files will be written to /var/log/ddns.log, it's possible to mount this folder to a folder on your host system to make them persistent.
 
 #### Full example commands:
 ```
 docker run -p 8080:80 -e DOMAINS="@.domain.tld,*.domain.tld,sub.domain.tld" -v "/path/to/ApiSettings.php=/var/www/html/lib/Transip/ApiSettings.php" -v "/path/to/logs/=/var/log/" mbchristoff/transip-ddns:apache-latest
 
-docker run -e DOMAINS="@.domain.tld,*.domain.tld,sub.domain.tld" -v "/path/to/ApiSettings.php=/var/www/html/lib/Transip/ApiSettings.php" -v "/path/to/logs/=/var/log/" mbchristoff/transip-ddns:cli-latest
+docker run -e DOMAINS="@.domain.tld,*.domain.tld,sub.domain.tld" -e REMOTEKEY=mysupersecurekey -v "/path/to/ApiSettings.php=/var/www/html/lib/Transip/ApiSettings.php" -v "/path/to/logs/=/var/log/" mbchristoff/transip-ddns:cli-latest
 ```
 
 #### Docker-compose

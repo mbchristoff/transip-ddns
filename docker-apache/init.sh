@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Set remote key for remoteddns.php
+if [[ $REMOTEKEY ]]; then
+    sed -i "s/Mjs74k9bC3ACBn5pKn9eCnPeBRZFrreY/${REMOTEKEY}/g"  /var/www/html/remoteddns.php
+fi
+
 # Remove example domains
 sed -i '/$domains \[\]=/d' /var/www/html/checkwan.php
 
