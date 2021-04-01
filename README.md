@@ -108,6 +108,30 @@ Finally, create a cronjob to make sure the A records are being kept up to date e
 0 * * * * root " curl "http://remotewebserver.tld/transip-ddns/remoteddns.php?domain=@.domain.tld&key=Mjs74k9bC3ACBn5pKn9eCnPeBRZFrreY"
 ```
 
+This application is updates to work behind a reverse-proxy like apache/haproxy/nginx.
+To make this happen just forward the HTTP_X_FORWARDED_FOR header to this application with the client ip.
+Example for nginx:
+```
+server {
+        listen 80;
+
+        server_name remotewebserver.tld;
+
+        # block checkwan.php because this is for local use only.
+        location ^~ /checkwan.php {
+            deny all;
+            return 403;
+        }
+
+        location / {
+         proxy_pass          http://ddns-application-server;
+         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+         proxy_redirect off;
+        }
+}
+```
+
+
 ## Running in Docker
 
 ### images

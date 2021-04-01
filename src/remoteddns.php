@@ -11,6 +11,11 @@ define('KEY', 'Mjs74k9bC3ACBn5pKn9eCnPeBRZFrreY'); //Generate your own random ke
 // Get external ip address
 $ipAddress = $_SERVER['REMOTE_ADDR'];
 
+// Check for HTTP_X_FORWARDED_FOR header and use that if set
+if (!empty($_SERVER["HTTP_X_FORWARDED_FOR"])) {
+$ipAddress = $_SERVER["HTTP_X_FORWARDED_FOR"];
+}
+
 // Check if domain is defined
 if(empty($_GET['domain']))
 {
