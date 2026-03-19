@@ -1,3 +1,6 @@
 src/lib/Transip/ApiSettings.php
 docker-apache/ApiSettings.php
 docker-cli/ApiSettings.php
+src/lib/transip_settings.py
+docker-apache/transip_settings.py
+docker-cli/transip_settings.py

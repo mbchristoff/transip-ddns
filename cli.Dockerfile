@@ -1,16 +1,12 @@
-FROM php:cli-alpine
+FROM python:3-alpine
 LABEL maintainer="MBchristoff"
 
-ENV LOG_STDOUT="" \
-    LOG_STDERR="" \
-    LANG="C.UTF-8" \
+ENV LANG="C.UTF-8" \
     LC_ALL="C.UTF-8"
 
-# Install extra dependencies
-RUN apk add --no-cache \
-        libxml2-dev
-
-RUN docker-php-ext-install soap
+# Install Python dependencies
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
 # Copy source files
 COPY src/ /var/www/html/
