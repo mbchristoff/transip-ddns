@@ -1,0 +1,10 @@
+# TransIP API Settings
+# Copy this file to transip_settings.py and fill in your credentials.
+
+# Your login name on the TransIP website.
+LOGIN = 'USERNAME'
+
+# One of your private keys; these can be requested via your Controlpanel.
+PRIVATE_KEY = '''-----BEGIN PRIVATE KEY-----
+YOURKEYHERE
+-----END PRIVATE KEY-----'''
